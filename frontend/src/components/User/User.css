@@ -1,0 +1,113 @@
+.profilecard {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 20px;
+  overflow-x: clip;
+  gap: 1.2rem;
+  padding: 2rem;
+}
+
+.profileinfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profileinfo > span:nth-of-type(1) {
+  font-weight: bold;
+}
+
+.followerinfo {
+  display: flex;
+  gap: 3rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.following,
+.follower,
+.post {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-basis: 20%;
+}
+.follower,
+.following {
+  cursor: pointer;
+}
+
+.following > span:nth-of-type(1),
+.follower > span:nth-of-type(1),
+.post > span:nth-of-type(1) {
+  font-weight: bold;
+  font-size: large;
+}
+
+.vl {
+  height: 60px;
+  border: 1px solid grey;
+}
+
+hr {
+  border: 1px solid grey;
+  width: 100%;
+}
+
+.infoimages {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.infoimages > .cover {
+  width: 100%;
+  height: 250px;
+}
+
+.infoimages > img:nth-of-type(1) {
+  width: 20%;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.all_repos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .profilecard {
+    padding: 1rem;
+  }
+
+  .followerinfo {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .following,
+  .follower,
+  .post {
+    flex-basis: 100%;
+  }
+
+  .infoimages > img:nth-of-type(1) {
+    width: 30%;
+  }
+
+  .vl {
+    display: none;
+  }
+
+  .all_repos {
+    grid-template-columns: 1fr;
+  }
+}

@@ -8,10 +8,8 @@ const User= db.users;
 const Repository= db.repository;
 const Followers = db.followers;
 
-console.log("\n\n\n",{User, Repository, Followers}, "\n\n\n")
-
 //save user to db
-exports.saveUserDetails = async (req,res) => {
+exports.fetchOrSaveUserDetails = async (req,res) => {
     const t= await db.sequelize.transaction();
 
     const {username}= req.body;
@@ -117,27 +115,6 @@ exports.saveUserDetails = async (req,res) => {
 }
 
 
-exports.getUserWithRepositories = async (req, res) => {
-    try {
-      const { username } = req.params;
-      const user = await User.findOne({
-        where: { username: username },
-        include: [{
-          model: Repository,
-          as: 'repositories'
-        }]
-      });
-  
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-  
-      res.status(200).json(user);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  };
-
 
 //soft delete
 exports.softDeleteUser = async (req, res) => {
@@ -177,6 +154,9 @@ exports.forceDeleteUser = async (req, res) => {
     }
   };
 
+
+
+
 //search db based on username, location, 
 exports.searchUserDatabaseOnLocation = async (req,res) => {
     try{
@@ -199,7 +179,8 @@ exports.searchUserDatabaseOnCompany = async (req,res) => {
     }
 }
 
-//get all users from db- sorted by public_repo, public_gists, followers, following, github_created_at, github_updated_at
+
+
 
 
 //fetch followers list
@@ -298,7 +279,7 @@ const getUserFollowersAndFriends = async (username) => {
     })
 
     const result = await Followers.bulkCreate(arr)
-    console.log("\n\n After inserting, before commiting",{result})
+    // console.log("\n\n After inserting, before commiting",{result})
     
     return true;
   }catch(error){

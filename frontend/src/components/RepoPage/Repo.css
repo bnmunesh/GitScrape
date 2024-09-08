@@ -1,0 +1,99 @@
+.repoContainer {
+  margin-top: 4rem;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  border: 1px solid #e1e4e8;
+}
+
+.header {
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.backButtonText {
+  margin-left: 5px;
+}
+
+.repoName {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.repoMeta {
+  font-size: 14px;
+  color: #586069;
+}
+
+.description {
+  padding: 1.2rem 0;
+  border-bottom: 1px solid #eaecef;
+  font-size: 12px;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+.infoList {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.infoList li {
+  padding-bottom: 10px;
+}
+
+.linksSection {
+  border-top: 1px solid #eaecef;
+  padding: 1rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.linkItem {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.linkContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.copyIcon {
+  cursor: pointer;
+  font-size: 19px;
+  color: #0366d6;
+}
+
+.copyIcon:hover {
+  opacity: 0.8;
+}
+
+.infoDates,
+.InfoStats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
