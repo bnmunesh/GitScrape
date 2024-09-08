@@ -2,43 +2,17 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaCopy, FaGithub, FaLink } from "react-icons/fa";
 import { IoMdCheckmark } from "react-icons/io";
+import {useLocation } from 'react-router-dom'
 import "./Repo.css";
 
 const RepoDetails = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const repoData = location.state?.repoData;
 
-  // Repository data
-  const repoData = {
-    repo_id: 853937437,
-    name: "gitscrape",
-    private: false,
-    html_url: "https://github.com/bnmunesh/gitscrape",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus molestias quasi quisquam consectetur autem rem voluptates aliquam, quam voluptatibus assumenda, consequuntur porro ipsam nesciunt, eveniet nobis blanditiis incidunt sapiente nam.",
-    url: "https://api.github.com/repos/bnmunesh/gitscrape",
-    forks_url: "https://api.github.com/repos/bnmunesh/gitscrape/forks",
-    contributors_url:
-      "https://api.github.com/repos/bnmunesh/gitscrape/contributors",
-    git_created_at: "2024-09-08T00:29:55.000Z",
-    git_updated_at: "2024-09-08T00:32:40.000Z",
-    git_pushed_at: "2024-09-08T00:32:37.000Z",
-    ssh_url: "git@github.com:bnmunesh/gitscrape.git",
-    clone_url: "https://github.com/bnmunesh/gitscrape.git",
-    size: 0,
-    archived: false,
-    disabled: false,
-    visibility: "public",
-    forks: 0,
-    open_issues: 0,
-    watchers: 0,
-    default_branch: "main",
-    user_id: "141001469",
-  };
 
-  // Format date
   const formatDate = (dateString) => new Date(dateString).toLocaleDateString();
 
-  // Handle copy to clipboard
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text).then(() => {
       alert("Copied to clipboard!");

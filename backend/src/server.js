@@ -4,14 +4,15 @@ const router = require('./routes/userRouter.js')
 const app = express()
 
 
-var corOptions ={
-    origin: 'https://localhost:8081'
-}
-
-
 //middlewares
 
-app.use(cors(corOptions))
+app.use(
+    cors({
+      origin: ["http://localhost:5173"],
+      methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
+      credentials: true,
+    })
+  );
 
 app.use(express.json())
 

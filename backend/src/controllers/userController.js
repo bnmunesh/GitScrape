@@ -3,121 +3,122 @@ const axios = require('axios');
 const moment = require('moment');
 const { Op } = require('sequelize');
 
+
 //create main model
 const User= db.users;
 const Repository= db.repository;
 const Followers = db.followers;
 
 //save user to db
-exports.fetchOrSaveUserDetails = async (req,res) => {
-    const t= await db.sequelize.transaction();
+const fetchOrSaveUserDetails = async (req,res) => {
+  const t= await db.sequelize.transaction();
 
-    const {username}= req.body;
-    try{
-        let user = await User.findOne({where: {username: username}, raw: true});
-        let userObj;
-        if(!user){
-        
-          let response;
-          try{
-            response = await axios.get(`https://api.github.com/users/${username}`);
-          }catch(error){
-            console.log("error while fetching user details", error)
-            return res.status(404).json({error: error.message})
-          }
-            const userData = response.data;
-             userObj = {
-              username: userData.login,
-              github_id: userData.id,
-              avatar_url: userData.avatar_url,
-              url: userData.url,
-              html_url: userData.html_url,
-              followers_url: userData.followers_url,
-              following_url: userData.following_url,
-              repos_url: userData.repos_url,
-              name: userData.name,
-              company: userData.company,
-              blog: userData.blog,
-              location: userData.location,
-              email: userData.email,
-              bio: userData.bio,
-              twitter_username: userData.twitter_username,
-              public_repos: userData.public_repos,
-              public_gists: userData.public_gists,
-              followers: userData.followers,
-              following: userData.following,
-              github_created_at: userData.created_at,
-              github_updated_at: userData.updated_at
-          }
-            user = await User.create(
-                {...userObj},
-                { transaction: t } 
-            );
-
-
-            //fetch and save repository details of user
-            let reposResponse
-            try{
-              reposResponse= await axios.get(userData.repos_url);
-            }catch(error){
-              console.log("error while fetching user repositories", error)
-              return res.status(404).json(error.message)
-            }
-            const repositories = reposResponse.data;
-            const destructuredRepositories = []
-            for(const repo of repositories){
-                const obj = {
-                  user_id: user.github_id,
-                  repo_id: repo.id,
-                  name: repo.name,
-                  private: repo.private,
-                  html_url: repo.html_url,
-                  description: repo.description,
-                  url: repo.url,
-                  forks_url: repo.forks_url,
-                  contributors_url: repo.contributors_url,
-                  git_created_at: repo.created_at,
-                  git_updated_at: repo.updated_at,
-                  git_pushed_at: repo.pushed_at,
-                  ssh_url: repo.ssh_url,
-                  clone_url: repo.clone_url,
-                  size: repo.size,
-                  archived: repo.archived,
-                  disabled: repo.disabled,
-                  visibility: repo.visibility,
-                  forks: repo.forks,
-                  open_issues: repo.open_issues,
-                  watchers: repo.watchers,
-                  default_branch: repo.default_branch
-              }
-              destructuredRepositories.push(obj)
-            }
-            const repos = await Repository.bulkCreate(destructuredRepositories,
-              { transaction: t}
-            );
-
-            // userObj = {...userObj, repositories: destructuredRepositories}
-            userObj.repositories= destructuredRepositories
-            await t.commit();
-            getUserFollowersAndFriends(username)
-        }else{
-            console.log('\n\n\ninside else')
-          const userRepos = await Repository.findAll({where: {user_id: user.github_id}, raw: true})
-            userObj = {...user, repositories: userRepos}
+  const {username}= req.params;
+  try{
+      let user = await User.findOne({where: {username: username}, raw: true});
+      let userObj;
+      if(!user){
+      
+        let response;
+        try{
+          response = await axios.get(`https://api.github.com/users/${username}`);
+        }catch(error){
+          console.log("error while fetching user details", error)
+          return res.status(404).json({error: error.message})
         }
-        
-        
-        res.status(201).json(userObj);
-      }catch(error) {
-        await t.rollback();
-        res.status(500).json({error: error.message})
+          const userData = response.data;
+           userObj = {
+            username: userData.login,
+            github_id: userData.id,
+            avatar_url: userData.avatar_url,
+            url: userData.url,
+            html_url: userData.html_url,
+            followers_url: userData.followers_url,
+            following_url: userData.following_url,
+            repos_url: userData.repos_url,
+            name: userData.name,
+            company: userData.company,
+            blog: userData.blog,
+            location: userData.location,
+            email: userData.email,
+            bio: userData.bio,
+            twitter_username: userData.twitter_username,
+            public_repos: userData.public_repos,
+            public_gists: userData.public_gists,
+            followers: userData.followers,
+            following: userData.following,
+            github_created_at: userData.created_at,
+            github_updated_at: userData.updated_at
+        }
+          user = await User.create(
+              {...userObj},
+              { transaction: t } 
+          );
+
+
+          //fetch and save repository details of user
+          let reposResponse
+          try{
+            reposResponse= await axios.get(userData.repos_url);
+          }catch(error){
+            console.log("error while fetching user repositories", error)
+            return res.status(404).json(error.message)
+          }
+          const repositories = reposResponse.data;
+          const destructuredRepositories = []
+          for(const repo of repositories){
+              const obj = {
+                user_id: user.github_id,
+                repo_id: repo.id,
+                name: repo.name,
+                private: repo.private,
+                html_url: repo.html_url,
+                description: repo.description,
+                url: repo.url,
+                forks_url: repo.forks_url,
+                contributors_url: repo.contributors_url,
+                git_created_at: repo.created_at,
+                git_updated_at: repo.updated_at,
+                git_pushed_at: repo.pushed_at,
+                ssh_url: repo.ssh_url,
+                clone_url: repo.clone_url,
+                size: repo.size,
+                archived: repo.archived,
+                disabled: repo.disabled,
+                visibility: repo.visibility,
+                forks: repo.forks,
+                open_issues: repo.open_issues,
+                watchers: repo.watchers,
+                default_branch: repo.default_branch
+            }
+            destructuredRepositories.push(obj)
+          }
+          const repos = await Repository.bulkCreate(destructuredRepositories,
+            { transaction: t}
+          );
+
+          // userObj = {...userObj, repositories: destructuredRepositories}
+          userObj.repositories= destructuredRepositories
+          await t.commit();
+          getUserFollowersAndFriends(username)
+      }else{
+          console.log('\n\n\ninside else',user)
+        const userRepos = await Repository.findAll({where: {user_id: user.github_id}, raw: true})
+          userObj = {...user, repositories: userRepos}
       }
+      
+      
+      res.status(201).json(userObj);
+    }catch(error) {
+      await t.rollback();
+      res.status(500).json({error: error.message})
+    }
 }
 
 
 
 //soft delete
-exports.softDeleteUser = async (req, res) => {
+const softDeleteUser = async (req, res) => {
     try {
       const { username } = req.params;
       const user = await User.findOne({ where: { username: username } });
@@ -134,8 +135,11 @@ exports.softDeleteUser = async (req, res) => {
     }
   };
 
+
+
+
 //force or hard delete from db
-exports.forceDeleteUser = async (req, res) => {
+const forceDeleteUser = async (req, res) => {
   
     try {
       const { username } = req.query;
@@ -157,31 +161,10 @@ exports.forceDeleteUser = async (req, res) => {
 
 
 
-//search db based on username, location, 
-exports.searchUserDatabaseOnLocation = async (req,res) => {
-    try{
-
-
-
-    }
-    catch(error){
-
-    }
-}
-exports.searchUserDatabaseOnCompany = async (req,res) => {
-    try{
-
-        
-
-    }
-    catch(error){
-
-    }
-}
 
 
 //get all users sorted by preference
-exports.getUsers = async (req, res) => {
+const getUsers = async (req, res) => {
   try {
     const { sort, by } = req.query;
 
@@ -225,8 +208,10 @@ exports.getUsers = async (req, res) => {
 };
 
 
+
+
 //fetch followers list
-exports.fetchFollowersController = async (req,res)=>{
+const fetchFollowersController = async (req,res)=>{
   const list = await fetchFollowers(req.params.username)
   return res.status(list?200:404).json(list)
 }
@@ -330,8 +315,46 @@ const getUserFollowersAndFriends = async (username) => {
   }
 } 
 
+
+
+
+
+//search db based on username, location, 
+const searchUsersInDatabase = async (req,res) => {
+  try{
+    const { location, company } = req.query;
+    
+    let whereClause = {};
+    
+    if (location) {
+      whereClause.location = {
+        [Op.like]: `%${location}%`
+      };
+    }
+    
+    if (company) {
+      whereClause.company = {
+        [Op.like]: `%${company}%`
+      };
+    }
+    
+    const users = await User.findAll({
+      where: whereClause,
+      attributes: ['github_id', 'username', 'name', 'location', 'company']
+    });
+    
+    res.json(users);
+  }catch(error){
+    console.error('Error searching users:', error);
+    res.status(500).json({ error: 'An error occurred while searching users', details: error.message });
+  }
+}
+
+
+
+
 //compare and update user details
-exports.updateUserDetails = async (req, res) => {
+const updateUserDetails = async (req, res) => {
     try{
         const { username } = req.params;
         const user = await User.findOne({ where: { username: username } });
@@ -344,7 +367,7 @@ exports.updateUserDetails = async (req, res) => {
         try{
             response = await axios.get(`https://api.github.com/users/${username}`);
         }catch(error){
-            console.log("error while fetching user details", error)
+            console.log("error while fetching user details from api", error)
             return res.status(404).json({error: error.message})
         }
         const userData = response.data;
@@ -356,6 +379,31 @@ exports.updateUserDetails = async (req, res) => {
         }
         else if(dbUpdatedAt.isBefore(responseUpdatedAt)){
               console.log("Resposne updated_at is greater (more recent). Update User Details");
+
+              await User.update({
+                avatar_url: userData.avatar_url,
+                url: userData.url,
+                html_url: userData.html_url,
+                followers_url: userData.followers_url,
+                following_url: userData.following_url,
+                repos_url: userData.repos_url,
+                name: userData.name,
+                company: userData.company,
+                blog: userData.blog,
+                location: userData.location,
+                email: userData.email,
+                bio: userData.bio,
+                twitter_username: userData.twitter_username,
+                public_repos: userData.public_repos,
+                public_gists: userData.public_gists,
+                followers: userData.followers,
+                following: userData.following,
+                github_created_at: userData.created_at,
+                github_updated_at: userData.updated_at
+            }, {
+                where: { username: username }
+            });
+
               return res.status(200).send('Response updated_at is greater (more recent). Update User Details');
         }
         else{
@@ -365,7 +413,18 @@ exports.updateUserDetails = async (req, res) => {
 
     }
     catch(error){
-        console.log("Error while fetching user's followeres:", error);
-        return null;
+        console.log("Error while updating user details:", error);
+        return res.status(500).json({ error: 'An error occurred while updating user details' });
     }
 };
+
+module.exports={
+  fetchOrSaveUserDetails,
+  softDeleteUser,
+  forceDeleteUser,
+  searchUsersInDatabase,
+  getUsers,
+  updateUserDetails,
+  fetchFollowersController,
+  getUserFollowersAndFriends
+}

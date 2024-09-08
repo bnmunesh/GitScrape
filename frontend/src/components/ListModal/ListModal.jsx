@@ -1,14 +1,19 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./ListModal.css";
+import { useQuery } from "@tanstack/react-query";
+
 
 const ListModal = ({ data, isOpen, onClose }) => {
   const navigate = useNavigate();
 
   if (!isOpen) return null;
 
+  
+
   const handleClick = (username) => {
     navigate(`/user/${username}`);
+    onClose();
   };
 
   return (
@@ -18,14 +23,14 @@ const ListModal = ({ data, isOpen, onClose }) => {
           &times;
         </button>
         <div className="listContainer">
-          {data.map((item, index) => (
+          {data?.map((item, index) => (
             <div
               key={index}
               className="listItem"
-              onClick={() => handleClick(item.login)}
+              onClick={() => handleClick(item.username)}
             >
               <img src={item.avatar_url} alt={item.login} className="avatar" />
-              <h1 className="username">{item.login}</h1>
+              <h1 className="username"> @ {item.username}</h1>
             </div>
           ))}
         </div>
