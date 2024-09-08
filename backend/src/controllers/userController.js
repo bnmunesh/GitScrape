@@ -2,6 +2,9 @@ const db= require('../models');
 const axios = require('axios');
 const moment = require('moment');
 const { Op } = require('sequelize');
+require('dotenv').config();
+
+const token = process.env.GITHUB_TOKEN;
 
 
 //create main model
@@ -21,7 +24,9 @@ const fetchOrSaveUserDetails = async (req,res) => {
       
         let response;
         try{
-          response = await axios.get(`https://api.github.com/users/${username}`);
+          response = await axios.get(`https://api.github.com/users/${username}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
         }catch(error){
           console.log("error while fetching user details", error)
           return res.status(404).json({error: error.message})
@@ -59,7 +64,9 @@ const fetchOrSaveUserDetails = async (req,res) => {
           //fetch and save repository details of user
           let reposResponse
           try{
-            reposResponse= await axios.get(userData.repos_url);
+            reposResponse= await axios.get(userData.repos_url, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
           }catch(error){
             console.log("error while fetching user repositories", error)
             return res.status(404).json(error.message)
@@ -283,10 +290,16 @@ const fetchFollowers = async (username) => {
 const getUserFollowersAndFriends = async (username) => {
   try {
     console.log("\n\n@!@!@!@!@@!@!\n\n")
-    const [response1, response2] = await Promise.all([
-      axios.get(`https://api.github.com/users/${username}/followers`),
-      axios.get(`https://api.github.com/users/${username}/following`)
-    ])
+    const [response1, response2] = await Promise.all(
+      [
+          axios.get(`https://api.github.com/users/${username}/followers`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          }),
+          axios.get(`https://api.github.com/users/${username}/following`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
+      ]
+    );
 
     const followers = response1.data
     const following = response2.data
@@ -365,7 +378,9 @@ const updateUserDetails = async (req, res) => {
 
         let response;
         try{
-            response = await axios.get(`https://api.github.com/users/${username}`);
+            response = await axios.get(`https://api.github.com/users/${username}`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
         }catch(error){
             console.log("error while fetching user details from api", error)
             return res.status(404).json({error: error.message})
@@ -384,8 +399,6 @@ const updateUserDetails = async (req, res) => {
                 avatar_url: userData.avatar_url,
                 url: userData.url,
                 html_url: userData.html_url,
-                followers_url: userData.followers_url,
-                following_url: userData.following_url,
                 repos_url: userData.repos_url,
                 name: userData.name,
                 company: userData.company,
@@ -398,14 +411,13 @@ const updateUserDetails = async (req, res) => {
                 public_gists: userData.public_gists,
                 followers: userData.followers,
                 following: userData.following,
-                github_created_at: userData.created_at,
                 github_updated_at: userData.updated_at
             }, {
                 where: { username: username }
             });
 
-              return res.status(200).send('Response updated_at is greater (more recent). Update User Details');
-        }
+              return res.status(200).send('Updated User Details');
+          }
         else{
             console.log("Both dates are equal");
             return res.status(200).send('Both are equal');
@@ -418,6 +430,29 @@ const updateUserDetails = async (req, res) => {
     }
 };
 
+
+const getMutualsofUser = async (req,res) => {
+  try{
+    const {username}= req.params;
+    const friends = await Followers.findAll({
+        where: {
+            username: username,
+            isFriend: true
+        },
+        attributes: ['username2']
+    });
+
+    // Extract the usernames from the result
+    const usernames = friends.map(f => f.username2);
+
+    res.status(200).json(usernames);
+  }catch(error){
+    console.log('Error fetching friends:', error);
+    res.status(500).json({error: error.message});
+  }
+}
+
+
 module.exports={
   fetchOrSaveUserDetails,
   softDeleteUser,
@@ -426,5 +461,6 @@ module.exports={
   getUsers,
   updateUserDetails,
   fetchFollowersController,
-  getUserFollowersAndFriends
+  getUserFollowersAndFriends,
+  getMutualsofUser
 }
