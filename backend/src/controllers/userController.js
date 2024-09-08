@@ -180,7 +180,49 @@ exports.searchUserDatabaseOnCompany = async (req,res) => {
 }
 
 
+//get all users sorted by preference
+exports.getUsers = async (req, res) => {
+  try {
+    const { sort, by } = req.query;
 
+    let queryOptions = {
+      attributes: [
+        'github_id', 'username', 'name', 'company', 'blog', 'location', 'email',
+        'bio', 'twitter_username', 'public_repos', 'public_gists', 'followers',
+        'following', 'github_created_at', 'github_updated_at'
+      ]
+    };
+
+    if (sort) {
+      const validSortFields = [
+        'github_id', 'username', 'name', 'company', 'location', 'email',
+         'twitter_username', 'public_repos', 'public_gists', 'followers',
+        'following', 'github_created_at', 'github_updated_at'
+      ];
+
+      if (!validSortFields.includes(sort)) {
+        return res.status(400).json({ error: 'Invalid sort field' });
+      }
+
+      const validSortOrders = ['ASC', 'DESC'];
+      const sortOrder = by.toUpperCase();
+      
+      if (!validSortOrders.includes(sortOrder)) {
+        return res.status(400).json({ error: 'Invalid sort order. Use ASC or DESC' });
+      }
+
+      queryOptions.order = [[sort, sortOrder]];
+    }
+
+    let users = await User.findAll(queryOptions);
+
+    res.status(200).json(users);
+
+  } catch (error) {
+    console.error('Error in getUsers:', error);
+    res.status(500).json({ error: 'An error occurred while fetching users' });
+  }
+};
 
 
 //fetch followers list
