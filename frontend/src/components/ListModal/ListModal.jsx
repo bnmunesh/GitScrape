@@ -27,10 +27,10 @@ const ListModal = ({ data, isOpen, onClose }) => {
             <div
               key={index}
               className="listItem"
-              onClick={() => handleClick(item.username)}
+              onClick={() => handleClick(item.follower_username)}
             >
               <img src={item.avatar_url} alt={item.login} className="avatar" />
-              <h1 className="username"> @ {item.username}</h1>
+              <h1 className="username"> @ {item.follower_username}</h1>
             </div>
           ))}
         </div>

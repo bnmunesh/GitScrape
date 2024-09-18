@@ -2,7 +2,6 @@ import React from "react";
 import Search from "../../components/search/Search";
 import "./Home.css";
 import Logo from "../../components/Logo/Logo";
-import User from "../../components/User/User";
 const Home = () => {
   return (
     <>
