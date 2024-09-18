@@ -6,11 +6,10 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
         primaryKey: true
       },
-      github_id: {
+      user_id: {
         type: DataTypes.BIGINT,
         allowNull: false,
         unique: true,
-        primaryKey: true
       },
       avatar_url: DataTypes.STRING,
       url: DataTypes.STRING,
@@ -21,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       
       name: DataTypes.STRING,
       company: DataTypes.STRING,
-      blog: DataTypes.STRING,
+      blog: DataTypes.TEXT,
       location: DataTypes.STRING,
       email: DataTypes.STRING,
       bio: DataTypes.TEXT,
@@ -31,11 +30,23 @@ module.exports = (sequelize, DataTypes) => {
       followers: DataTypes.INTEGER,
       following: DataTypes.INTEGER,
       github_created_at: DataTypes.DATE,
-      github_updated_at: DataTypes.DATE
+      github_updated_at: DataTypes.DATE,
     }, {
-      paranoid: true, // This will automatically add the deletedAt column
-      timestamps: true, // This will add createdAt and updatedAt columns
+      paranoid: true,
+      timestamps: true, 
     });
+
+    User.associate = function(models){
+      User.hasMany(models.Repository, {
+        foreignKey: 'username',
+        as: 'repositories'
+      });
+
+      User.hasMany(models.Follower, {
+        foreignKey: 'username',
+        as: 'follower'
+      });
+    };
   
     return User;
   };

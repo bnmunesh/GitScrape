@@ -31,7 +31,7 @@ const Search = () => {
   };
 
   if (isLoading) return <div>Loading...</div>;
-  if (error) alert('Error',error)
+  if (error) alert('Username does not exist',error)
 
   return (
     <div className="search_user">

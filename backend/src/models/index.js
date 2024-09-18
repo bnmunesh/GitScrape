@@ -2,73 +2,51 @@
 const dbConfig = require('../config/databaseConfig.js');
 
 const {Sequelize, DataTypes} = require('sequelize');
+const fs = require('fs');
+const path = require('path');
 
 const sequelize = new Sequelize(
-    dbConfig.DB,
-    dbConfig.USER,
-    dbConfig.PASSWORD,
-    {
-        host: dbConfig.HOST,
-        dialect: dbConfig.dialect,
-        // operatorsAliases: false,
+  dbConfig.DB,
+  dbConfig.USER,
+  dbConfig.PASSWORD,
+  {
+    host: dbConfig.HOST,
+    dialect: dbConfig.dialect,
+    pool: dbConfig.pool,
+    // logging: console.log  // This will log SQL queries
+  }
+);
 
-        pool: {
-            max: dbConfig.pool.max,
-            min: dbConfig.pool.min,
-            acquire: dbConfig.pool.acquire,
-            idle: dbConfig.pool.idle,
-
-        }
-    }
-)
-
-
-sequelize.authenticate()
-.then(() => {
-    console.log('connected..')
-})
-.catch(err => {
-    console.log('Error'+ err)
-})
-
+// sequelize.authenticate()
+// .then(() => {
+//     console.log('connected..')
+// })
+// .catch(err => {
+//     console.log('Error'+ err)
+// })
 
 
 const db = {}
 
-db.Sequelize = Sequelize
+db.Sequelize = Sequelize;
 db.sequelize = sequelize
 
-db.users = require('./user.js')(sequelize, DataTypes)
-db.repository = require('./repository.js')(sequelize, DataTypes)
-db.followers = require('./followers.js')(sequelize, DataTypes, db.users)
-// console.log("\n\nFollowers:", db.followers)
-db.sequelize.sync()
-.then(()=> {
-    console.log('DB re-sync done!')
-})
-
-
-//1-Many Relationship
-db.users.hasMany(db.repository, {
-    as: 'repositories',
-    foreignKey: 'user_id',
-    onDelete: 'CASCADE',
-    hooks: true
-})
-
-db.repository.belongsTo(db.users, {
-    as: 'users',
-    foreignKey: 'user_id',
-    onDelete: 'CASCADE'
-})
-
-  
-  db.followers.belongsTo(db.users, {
-    foreignKey: 'username',  // This will reference the User's primary key (id)
-    onDelete: 'CASCADE'
+// Read all model files in the current directory except index.js file
+fs.readdirSync(__dirname)
+  .filter(file => {
+    return (file.indexOf('.') !== 0) && (file !== 'index.js') && (file.slice(-3) === '.js');
+  })
+  .forEach(file => {
+    const model = require(path.join(__dirname, file))(sequelize, DataTypes);
+    db[model.name] = model;
   });
 
-
-
+// Call associate if it exists in each model and set it up
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+    // console.log(`Associated model: ${modelName}`); // This will log each associated model
+  }
+});
 
 module.exports = db;

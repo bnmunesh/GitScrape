@@ -11,7 +11,7 @@ const Home = () => {
           <Logo />
         </div>
         <header>
-          <h1 className="github_header">GitHub User Scraper</h1>
+          <h1 className="github_header">GitScrape</h1>
           <p className="github_description">
             Effortlessly search and retrieve information about GitHub users,
             including their repositories, contributions, and profile details.

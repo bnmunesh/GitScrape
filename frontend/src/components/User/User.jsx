@@ -8,6 +8,7 @@ import { useParams } from 'react-router-dom'
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import Loader from '../Loader/Loader'
+
 const User = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();

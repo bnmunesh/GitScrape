@@ -9,12 +9,10 @@ module.exports = (sequelize, DataTypes) => {
       name: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
       },
       private: DataTypes.BOOLEAN,
-     
       html_url: DataTypes.STRING,
-      description: DataTypes.STRING,
+      description: DataTypes.TEXT,
       url: DataTypes.STRING,
       forks_url: DataTypes.STRING,
       contributors_url: DataTypes.STRING,
@@ -26,7 +24,6 @@ module.exports = (sequelize, DataTypes) => {
       ssh_url: DataTypes.STRING,
       clone_url: DataTypes.STRING,
       size: DataTypes.BIGINT,
-
       archived: DataTypes.BOOLEAN,
       disabled: DataTypes.BOOLEAN,
     
@@ -34,10 +31,22 @@ module.exports = (sequelize, DataTypes) => {
       forks: DataTypes.INTEGER,
       open_issues: DataTypes.INTEGER,
       watchers: DataTypes.INTEGER,
-      default_branch: DataTypes.STRING
+      default_branch: DataTypes.STRING,
+      username: {
+        type: DataTypes.STRING,
+        allowNull: false
+      }
     }, {
       timestamps: false,    
     });
+
+    Repository.associate = function(models){
+      Repository.belongsTo(models.User, {
+        foreignKey: 'username',
+        as: 'owner',
+        onDelete: 'CASCADE'
+      });
+    };
   
     return Repository;
   };
