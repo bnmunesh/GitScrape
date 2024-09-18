@@ -19,8 +19,6 @@ const fetchOrSaveUserDetails = async (username) => {
   const t = await db.sequelize.transaction();
 
   try {
-
-    console.log('\n\n\n@@@@@@@@@@@@@@@@@@@@@@@@@@@\n\n\n')
     let user = await User.findOne({
       where: { username: username},
       include: 'repositories'
@@ -332,7 +330,7 @@ const updateUserDetails = async (username) => {
 // ----------------------------------------------------------------------------------
 
 
-const getMutualsofUser = async (username) => {
+const getFriendsofUser = async (username) => {
   try {
     const friends = await Follower.findAll({
         where: {
@@ -361,5 +359,5 @@ module.exports = {
   fetchFollowers,
   searchUsersInDatabase,
   updateUserDetails,
-  getMutualsofUser
+  getFriendsofUser
 };

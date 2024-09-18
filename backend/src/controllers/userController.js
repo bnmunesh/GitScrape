@@ -87,10 +87,10 @@ class UserController {
   }
 
 
-  static async getMutualsofUser(req, res) {
+  static async getFriendsofUser(req, res) {
     try {
       const { username } = req.params;
-      const usernames = await UserService.getMutualsofUser(username);
+      const usernames = await UserService.getFriendsofUser(username);
       res.status(200).json(usernames);
     } catch (error) {
       console.error('Error in getMutualsofUser:', error);
