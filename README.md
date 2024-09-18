@@ -20,7 +20,7 @@ GitScrape is a full-stack application that uses **Node.js** and **Express.js** o
 
 - **Backend**: Node.js, Express.js
 - **Frontend**: React.js
-- **Database**: MySQL
+- **Database**: MySQL(RDBMS)
 - **ORM**: Sequelize
 - **API**: GitHub REST API
 
@@ -44,7 +44,7 @@ GitScrape is a full-stack application that uses **Node.js** and **Express.js** o
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/gitscrape.git
+   https://github.com/bnmunesh/gitscrape.git
    ```
 2. Install backend dependencies:
    ```bash
