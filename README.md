@@ -33,7 +33,7 @@ GitScrape is a full-stack application that uses **Node.js** and **Express.js** o
    ![User Page](./resources/userPage.png)
    ![User Page](./resources/userPage2.png)
 
-3. **Followers Page**  
+3. **Followers ModalList**  
    ![Followers Page](./resources/followersPage.png)
 
 4. **Repository Page**  
@@ -45,25 +45,27 @@ GitScrape is a full-stack application that uses **Node.js** and **Express.js** o
 1. Clone the repository:
    ```bash
    git clone https://github.com/yourusername/gitscrape.git
+   ```
 2. Install backend dependencies:
    ```bash
-   git clone https://github.com/yourusername/gitscrape.git
+   cd backend
+   npm install
+   ```
 3. Install frontend dependencies:
    ```bash
-   git clone https://github.com/yourusername/gitscrape.git
-4. Set up MySQL and configure the .env file with your database credentials and GitHub API token.
+   cd frontend
+   npm install
+   ```
+4. Set up MySQL and configure the .env file with your database credentials and GitHub API token(you can skip this if needed, but remove the token header in external axios calls made in the service layer).
 5. Run the application:
 
    - Backend: 
    ```bash
-   npm run start
+   npm run dev
    ```
    - Frontend: 
    ```bash
-   npm start
+   npm run dev
    ```
-## Contribution:
+## Contribution
 Feel free to fork the repository and submit pull requests with improvements or bug fixes.
-
-## Contact
-Munesh Kumar
